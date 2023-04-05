@@ -1,0 +1,4 @@
+﻿  hw1b.c
+C:\Users\weeee\Workspace\PSgit\PS_HW1B\PS_HW1B\hw1b.c(136,6): warning C4101: 'row' :참조되지 않은 지역 변수입니다.
+C:\Users\weeee\Workspace\PSgit\PS_HW1B\PS_HW1B\hw1b.c(135,6): warning C4101: 'curr' :참조되지 않은 지역 변수입니다.
+  PS_HW1B.vcxproj -> C:\Users\weeee\Workspace\PSgit\PS_HW1B\x64\Debug\PS_HW1B.exe

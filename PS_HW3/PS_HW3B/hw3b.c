@@ -141,6 +141,16 @@ void process_solution(int a[], int k, int arr[][maxN], int path[], Index index[]
 }
 
 void construct_candidates(int a[], int k, int c[], int* ncandidates,Index index[]){
+    /*finished에서 내가 잘랐던 것들을 construct에서 못 만들게 해야지 효과적인 것임.*/
+    /*prohibition도 finished에 있을 게 아님.*/
+    /*more than two of zero도 construct에서 하는 게 낳을 거임. 뒤에 트리를 더 만드는 것보다는.*/
+    /*
+        prohibition은 통제하기 쉬움.
+        multiple zero는 parameter로 갯수를 받아서? or 0이 들어왔을 때만, 0의 개수 체크해보는 for문 실행하는 것도 ㄱㅊ
+    
+    
+    */
+
     *ncandidates=0;
     int row=index[0].row, col=index[0].col;
     int mark[8][8]={0};

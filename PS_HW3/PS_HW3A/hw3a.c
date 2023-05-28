@@ -119,6 +119,7 @@ void process_solution(int a[], int k, data input, int arr[][maxN], int path[], I
 }
 
 void construct_candidates(int a[], int k, int n, int c[], int* ncandidates){
+    /*finished에서 내가 잘랐던 것들을 construct에서 못 만들게 해야지 효과적인 것임.*/
     c[0]=right;     // Move to right
     c[1]=down;      // move to down
     *ncandidates=2;

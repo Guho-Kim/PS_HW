@@ -1,8 +1,11 @@
+#ifndef HEADER_FILE
+#define HEADER_FILE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX_QUEUE_SIZE 100 // 큐의 최대 크기
+#define MAX_QUEUE_SIZE 10000 // 큐의 최대 크기
 
 // 큐 구조체 선언
 typedef struct Queue {
@@ -60,3 +63,4 @@ int peek(Queue *q) {
     }
     return q->data[q->front];
 }
+#endif

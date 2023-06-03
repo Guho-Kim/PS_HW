@@ -38,8 +38,7 @@ void make_arr(int arr[], int value){
 
 
 int bfs(int start[], int dest[], int forbidden[][4], int n){
-    int depth[MAXV];
-    for(int i=0; i<MAXV; i++) depth[i]=0;
+    int depth[MAXV]={0};
     Queue queue;
     initQueue(&queue);
     bool visited[10][10][10][10]={0};

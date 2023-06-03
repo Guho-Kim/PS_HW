@@ -1,27 +1,3 @@
-#include<stdio.h>
-#include<stdbool.h>
-#define prohibition -9999
-#define maxN 20
-#define right 1
-#define down 2
-#define MAXCANDIDATES 2
-#define NMAX 20
-typedef int data;
-typedef struct index{
-    int row;
-    int col;
-}Index;
-int solution_count;
-int minSum=9999;
-bool finished(int a[],int k,int arr[][maxN],int numRight, int numDown,Index index[]);
-void findWeight(Index index[], int numRight, int numDown);
-bool is_a_solution(int a[],int k, int n);
-void process_solution(int a[], int k, data input, int arr[][maxN], int path[], Index index[]);
-void construct_candidates(int a[], int k, int n, int c[], int* ncandidates);
-void backtrack(int a[], int k, data input, int arr[][maxN], int path[], Index index[],int numRight, int numDown);
-
-
-
 //example of input
 /*
 2 3 5 6
@@ -38,61 +14,72 @@ void backtrack(int a[], int k, data input, int arr[][maxN], int path[], Index in
 
 */
 
-void backtrack(int a[], int k, data input, int arr[][maxN], int path[], Index index[],int numRight, int numDown){
-    int c[MAXCANDIDATES];       //candidates for next position
-    int ncandidates;            //next position candidate count
-    int i;                      //counter
+#include<stdio.h>
+#include<stdbool.h>
+#define prohibition -9999
+#define maxSize 10
+#define right 1
+#define left 2
+#define up 3
+#define down 4
+#define MAXCANDIDATES 2
+typedef int data;
+typedef struct index{
+    int row;
+    int col;
+}Index;
 
-    if(is_a_solution(a,k,input))
-        process_solution(a,k,input,arr, path, index);
-    else{
-        k=k+1;
-        construct_candidates(a,k,input,c,&ncandidates);
-        for(i=0;i<ncandidates; i++){
-            a[k]=c[i];
-            if(finished(a,k,arr,numRight,numDown,index)) continue;    //terminate early
-            backtrack(a,k,input,arr, path, index, numRight, numDown);
-        }
-    }
+Index index[2];
+int solution_count;
+int minSum=9999;
+int map[maxSize+10][maxSize+10];
+int path[20];
+int numRight, numDown;
+bool finished = false;
+
+void findWeight();
+bool is_a_solution(int a[],int k, int n);
+void process_solution(int a[], int k, data input);
+void construct_candidates(int a[], int k, int n, int c[], int* ncandidates);
+void backtrack(int a[], int k, data input);
+
+int main(){
+    findWeight();
+    return 0;
 }
 
-bool finished(int a[],int k,int arr[][maxN],int numRight, int numDown, Index index[]){
-    int countRight =0, countDown=0;
-    int row=index[0].row, col=index[0].col, z_count=0;
-    int condition[20];
-    //check the boundary
-    for(int i=1; i<=k; i++){
-        if(a[i]==right) countRight++;
-        else countDown++;
+
+void findWeight(){
+    int n;
+    int row, col;
+    int a[20];        //solution vector
+
+    //Starting point and destination point
+    for(int i=0;i<2;i++){
+        scanf("%d",&index[i].row);
+        scanf("%d",&index[i].col);
     }
-    if(countRight>numRight || countDown >numDown) return true;   
-    //check the condition    
-    condition[0]=arr[row][col];
-    for(int i=1; i<=k; i++){
-        if(a[i]==right) col++;
-        else if(a[i]==down) row++;
-        condition[i]=arr[row][col];
-    }
-    for(int i=0; i<=k; i++) if(condition[i]==prohibition) return true;
-    for(int i=0; i<=k; i++) if(condition[i]==0) z_count++;
-    if(z_count >1) return true;
-    return false;
-}
-void findWeight(Index index[], int numRight, int numDown){
-    int n=numDown+numRight;
-    int path[20];
-    int row=index[0].row;
-    int col=index[0].col;
-    int arr[maxN][maxN];
-    for(int i=1; i<=10; i++){
-        for(int j=1; j<=10; j++){
-            scanf("%d",&arr[i][j]);
-    }   }
-    int a[NMAX];        //solution vector
+    // making map
+    for(int i=1; i<=maxSize; i++)
+        for(int j=1; j<=maxSize; j++)
+            scanf("%d",&map[i][j]);
+    
+
+    //number of moving
+    numDown=index[1].row-index[0].row;
+    numRight=index[1].col-index[0].col;
+
+    // number of total moving
+    n=numDown+numRight;
+
     a[0]=0;
     solution_count=0;
-    backtrack(a,0,n,arr, path, index, numRight, numDown);
-    minSum+=arr[row][col];
+    // backtrack ftn will make numSum
+    backtrack(a,0,n);
+
+    row = index[0].row;
+    col = index[0].col;
+
     printf("%d\n",minSum);
     printf("%d %d\n",row,col);
     for(int i=1; i<=n; i++){
@@ -100,17 +87,66 @@ void findWeight(Index index[], int numRight, int numDown){
         else row++;
         printf("%d %d\n",row, col);
     }
+    printf("solution_count is %d\n",solution_count);
 }
+
+
+
+void backtrack(int a[], int k, data input){
+    int c[MAXCANDIDATES];       //candidates for next position
+    int ncandidates;            //next position candidate count
+
+    if(is_a_solution(a,k,input))
+        process_solution(a,k,input);
+    else{
+        k=k+1;
+        construct_candidates(a,k,input,c,&ncandidates);
+        for(int i=0;i<ncandidates; i++){
+            a[k]=c[i];
+            backtrack(a,k,input);
+            if(finished) return;    //terminate early
+        }
+    }
+}
+void construct_candidates(int a[], int k, int n, int c[], int* ncandidates){
+    int countRight=0, countDown=0;
+    int lastRow, lastCol;
+    int numZero=0;
+    *ncandidates=0;
+
+    lastRow=index[0].row, lastCol=index[0].col;
+    for(int i=1; i<k; i++){
+        if(a[i]==right) lastCol++;
+        else lastRow++;
+    }
+    
+    for(int row = index[0].row; row<=lastRow; row++)
+        for(int col = index[0].col; col<=lastCol; col++)
+            if(map[row][col]==0) numZero++;
+
+    if(numZero >1) return;
+
+    if(lastCol < index[1].col && map[lastRow][lastCol+1]!=prohibition){
+        c[(*ncandidates)++]=right;
+    }
+    if(lastRow < index[1].row && map[lastRow+1][lastCol]!=prohibition){
+        c[(*ncandidates)++]=down;
+    }
+
+}
+
 bool is_a_solution(int a[],int k, int n){
     return (k==n);
 }
-void process_solution(int a[], int k, data input, int arr[][maxN], int path[], Index index[]){    
+void process_solution(int a[], int k, data input){    
     solution_count++;
-    int sum=0, row=index[0].row, col=index[0].col;
+    int sum, row=index[0].row, col=index[0].col;
+    
     //check the condition    
+    sum=map[row][col];
     for(int i=1; i<=k; i++){
-        if(a[i]==right) sum += arr[row][++col];
-        else if(a[i]==down) sum += arr[++row][col];
+        if(a[i]==right) sum += map[row][++col];
+        else if(a[i]==down) sum += map[++row][col];
     }
     if(sum<minSum){
         minSum=sum;
@@ -118,27 +154,4 @@ void process_solution(int a[], int k, data input, int arr[][maxN], int path[], I
     }
 }
 
-void construct_candidates(int a[], int k, int n, int c[], int* ncandidates){
-    /*finished에서 내가 잘랐던 것들을 construct에서 못 만들게 해야지 효과적인 것임.*/
-    c[0]=right;     // Move to right
-    c[1]=down;      // move to down
-    *ncandidates=2;
-}
 
-int main(){
-    Index index[2];
-    int sum=0;
-    int numRight, numDown;
-    //Starting point and destination point
-    for(int i=0;i<2;i++){
-        scanf("%d",&index[i].row);
-        scanf("%d",&index[i].col);
-    }
-    //number of moving
-    numDown=index[1].row-index[0].row;
-    numRight=index[1].col-index[0].col;
-
-    findWeight(index,numRight,numDown);
-
-    return 0;
-}

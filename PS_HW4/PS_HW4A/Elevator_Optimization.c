@@ -5,6 +5,8 @@
 #define min(i, j) ((i)<(j) ? (i) : (j))
 #define abs(i) ((i)>0 ? (i) : (i*(-1)))
 
+
+
 int stops[MAX_RIDERS];          /* what floor does everyone get off? */
 int nriders;                    /* number of riders */
 int nstops;                     /* number of allowable stops */

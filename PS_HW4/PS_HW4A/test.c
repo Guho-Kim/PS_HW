@@ -1,8 +1,21 @@
-// #include<stdio.h>
-// #define max ~(1<<31)
-// #define abs(i) ((i)>0 ? (i) : (i*(-1)))
-// int main(){
+#include<stdio.h>
+int main(){
 
-//     printf("%d",abs(3));
-//     return 0;
-// }
+    int n=1;
+    switch (n)
+    {
+    case 1:
+    
+        printf("n is %d\n",n);
+        n=2;
+
+        
+    case 2:
+        printf("n is %d\n",n);
+        n=1;
+        
+    }
+
+
+    return 0;
+}
